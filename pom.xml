@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.vaadin.pekka</groupId>
-    <artifactId>wysiwyg_e</artifactId>
+    <artifactId>wysiwyg_e-java</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>wysiwyg-e</name>
-    <description>Integration of wysiwyg-e for Vaadin 10</description>
+    <name>wysiwyg-e Rich Text Editor</name>
+    <description>Integration of wysiwyg-e Rich Text Editor for Vaadin 10</description>
 
     <properties>
         <vaadin.version>10.0.0.beta4</vaadin.version>
@@ -22,8 +22,8 @@
     </organization>
     <licenses>
         <license>
-            <name>Apache 2</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <name>MIT License</name>
+            <url>https://github.com/pleku/wysiwyg-e-flow/blob/master/LICENSE</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -104,7 +104,12 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>9.3.7.v20160115</version>
                 <configuration>
-                    <scanIntervalSeconds>-1</scanIntervalSeconds>
+                    <scanClassesPattern>
+                        <includes>
+                            */org/vaadin/*
+                        </includes>
+                    </scanClassesPattern>
+                    <scanIntervalSeconds>3000</scanIntervalSeconds>
                     <!-- Use test scope because the UI/demo classes are in 
                         the test package. -->
                     <useTestScope>true</useTestScope>
