@@ -30,6 +30,7 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.Synchronize;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.dom.Element;
 
 import java.util.Objects;
 
@@ -44,13 +45,29 @@ import java.util.Objects;
  */
 @Tag("wysiwyg-e")
 @HtmlImport("bower_components/wysiwyg-e/wysiwyg-e.html")
+@HtmlImport("bower_components/wysiwyg-e/tools/bold.html")
+@HtmlImport("bower_components/wysiwyg-e/tools/underline.html")
+@HtmlImport("bower_components/wysiwyg-e/tools/strike.html")
+@HtmlImport("bower_components/wysiwyg-e/tools/color.html")
+@HtmlImport("bower_components/wysiwyg-e/tools/clear.html")
+@HtmlImport("bower_components/wysiwyg-e/tools/code.html")
+@HtmlImport("bower_components/wysiwyg-e/tools/link.html")
+@HtmlImport("bower_components/wysiwyg-e/tools/image.html")
+@HtmlImport("bower_components/wysiwyg-e/tools/audio.html")
+@HtmlImport("bower_components/wysiwyg-e/tools/video.html")
+@HtmlImport("bower_components/wysiwyg-e/tools/ordered.html")
+@HtmlImport("bower_components/wysiwyg-e/tools/indent.html")
+@HtmlImport("bower_components/wysiwyg-e/tools/outdent.html")
+@HtmlImport("bower_components/wysiwyg-e/tools/justify.html")
+@HtmlImport("bower_components/wysiwyg-e/tools/heading.html")
+@HtmlImport("bower_components/wysiwyg-e/tools/blockquote.html")
 public class WysiwygE extends Component implements HasSize, HasStyle, HasValue<WysiwygE, String> {
 
     /**
-     * Constructs a wysiwyg-e rich text editor with default size of height 200px and width 400px.
+     * Constructs a wysiwyg-e rich text editor with default size of height 250px and width 600px.
      */
     public WysiwygE() {
-        this("200px", "400px");
+        this("250px", "600px");
     }
 
     /**
@@ -62,18 +79,63 @@ public class WysiwygE extends Component implements HasSize, HasStyle, HasValue<W
     public WysiwygE(String height, String width) {
         setHeight(height);
         setWidth(width);
+        initToolbar();
     }
 
     /**
-     * Constructs a wysiwyg-e rich text editor with the given size and value change listener.
-     *
-     * @param height              the height for the editor
-     * @param width               the width for the editor
-     * @param valueChangeListener the value change listener to set
+     * Inits the toolbar with the following tools:
+     * {@code
+     * <wysiwyg-tool-bold></wysiwyg-tool-bold>
+     * <wysiwyg-tool-italic></wysiwyg-tool-italic>
+     * <wysiwyg-tool-underline></wysiwyg-tool-underline>
+     * <wysiwyg-tool-strike></wysiwyg-tool-strike>
+     * <wysiwyg-tool-color></wysiwyg-tool-color>
+     * <wysiwyg-tool-clear></wysiwyg-tool-clear>
+     * <wysiwyg-tool-code></wysiwyg-tool-code>
+     * <wysiwyg-tool-link></wysiwyg-tool-link>
+     * <wysiwyg-tool-image></wysiwyg-tool-image>
+     * <wysiwyg-tool-audio></wysiwyg-tool-audio>
+     * <wysiwyg-tool-video></wysiwyg-tool-video>
+     * <wysiwyg-tool-ordered></wysiwyg-tool-ordered>
+     * <wysiwyg-tool-unordered></wysiwyg-tool-unordered>
+     * <wysiwyg-tool-indent></wysiwyg-tool-indent>
+     * <wysiwyg-tool-outdent></wysiwyg-tool-outdent>
+     * <wysiwyg-tool-justify right center full></wysiwyg-tool-justify>
+     * <wysiwyg-tool-heading h1 h2 h3 h4 h5 h6></wysiwyg-tool-heading>
+     * <wysiwyg-tool-blockquote></wysiwyg-tool-blockquote>
+     * }
      */
-    public WysiwygE(String height, String width, ValueChangeListener<WysiwygE, String> valueChangeListener) {
-        this(height, width);
-        addValueChangeListener(valueChangeListener);
+    protected void initToolbar() {
+        getElement().appendChild(new Element("wysiwyg-tool-bold"));
+        getElement().appendChild(new Element("wysiwyg-tool-italic"));
+        getElement().appendChild(new Element("wysiwyg-tool-underline"));
+        getElement().appendChild(new Element("wysiwyg-tool-strike"));
+        getElement().appendChild(new Element("wysiwyg-tool-color"));
+        getElement().appendChild(new Element("wysiwyg-tool-clear"));
+        getElement().appendChild(new Element("wysiwyg-tool-code"));
+        getElement().appendChild(new Element("wysiwyg-tool-link"));
+        getElement().appendChild(new Element("wysiwyg-tool-image"));
+        getElement().appendChild(new Element("wysiwyg-tool-audio"));
+        getElement().appendChild(new Element("wysiwyg-tool-video"));
+        getElement().appendChild(new Element("wysiwyg-tool-ordered"));
+        getElement().appendChild(new Element("wysiwyg-tool-unordered"));
+        getElement().appendChild(new Element("wysiwyg-tool-indent"));
+        getElement().appendChild(new Element("wysiwyg-tool-outdent"));
+        Element justifyElement = new Element("wysiwyg-tool-justify").setAttribute("right", true)
+                .setAttribute("center", true)
+                .setAttribute("full", true);
+        getElement().appendChild(justifyElement);
+        // FIXME there is an JS error when opening heading bar
+        Element headingElement = new Element("wysiwyg-tool-heading")
+                .setAttribute("h1", true)
+                .setAttribute("h2", true)
+                .setAttribute("h3", true)
+                .setAttribute("h3", true)
+                .setAttribute("h4", true)
+                .setAttribute("h5", true)
+                .setAttribute("h6", true);
+        getElement().appendChild(headingElement);
+        getElement().appendChild(new Element("wysiwyg-tool-blockquote"));
     }
 
     @Override
