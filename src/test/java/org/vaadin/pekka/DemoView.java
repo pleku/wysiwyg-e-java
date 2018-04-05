@@ -26,6 +26,7 @@ package org.vaadin.pekka;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Span;
@@ -59,8 +60,8 @@ public class DemoView extends VerticalLayout {
 
     private void createComponent() {
         wysiwygE = new WysiwygE();
-        wysiwygE.setWidth("400px");
-        wysiwygE.setHeight("200px");
+        wysiwygE.setWidth("100%");
+        wysiwygE.setHeight("300px");
 
         wysiwygE.addValueChangeListener(this::onValueChange);
     }

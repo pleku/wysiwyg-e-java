@@ -36,7 +36,7 @@ import java.util.Objects;
 
 /**
  * A rich text editor that wraps the <a href="https://github.com/miztroh/wysiwyg-e">wysiwyg-e web component</a>.
- * <p>
+ *
  * <em>NOTE:</em> the editor should be always sized or it won't show up in the UI.
  * <p>
  * For setting and reading the editor value, use {@link #setValue(String)} and {@link #getValue()}.
