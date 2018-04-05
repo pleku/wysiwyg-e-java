@@ -59,9 +59,7 @@ public class DemoView extends VerticalLayout {
     }
 
     private void createComponent() {
-        wysiwygE = new WysiwygE();
-        wysiwygE.setWidth("100%");
-        wysiwygE.setHeight("300px");
+        wysiwygE = new WysiwygE("300px", "100vw");
 
         wysiwygE.addValueChangeListener(this::onValueChange);
     }

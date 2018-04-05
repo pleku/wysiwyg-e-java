@@ -125,7 +125,6 @@ public class WysiwygE extends Component implements HasSize, HasStyle, HasValue<W
                 .setAttribute("center", true)
                 .setAttribute("full", true);
         getElement().appendChild(justifyElement);
-        // FIXME there is an JS error when opening heading bar
         Element headingElement = new Element("wysiwyg-tool-heading")
                 .setAttribute("h1", true)
                 .setAttribute("h2", true)
