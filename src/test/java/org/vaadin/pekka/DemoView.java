@@ -73,7 +73,9 @@ public class DemoView extends VerticalLayout {
                 createCheckbox("Redo allowed", wysiwygE::setRedoAllowed, true),
                 createCheckbox("Undo allowed", wysiwygE::setUndoAllowed, true),
                 new Button("Undo", event -> wysiwygE.undo()),
-                new Button("Redo", event -> wysiwygE.redo()));
+                new Button("Redo", event -> wysiwygE.redo()),
+                new Button("Show value", e->Notification.show(wysiwygE.getText()))
+        );
         options.setDefaultVerticalComponentAlignment(Alignment.BASELINE);
     }
 
@@ -84,7 +86,7 @@ public class DemoView extends VerticalLayout {
         return checkbox;
     }
 
-    private void onValueChange(HasValue.ValueChangeEvent<WysiwygE, String> event) {
+    private void onValueChange(HasValue.ValueChangeEvent<String> event) {
         Div div = new Div();
         div.getElement().setProperty("innerText", event.getValue());
         div.getStyle().set("background-color", "springgreen");

@@ -23,12 +23,7 @@
  */
 package org.vaadin.pekka;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasSize;
-import com.vaadin.flow.component.HasStyle;
-import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.Synchronize;
-import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.dom.Element;
 
@@ -61,7 +56,7 @@ import java.util.Objects;
 @HtmlImport("bower_components/wysiwyg-e/tools/justify.html")
 @HtmlImport("bower_components/wysiwyg-e/tools/heading.html")
 @HtmlImport("bower_components/wysiwyg-e/tools/blockquote.html")
-public class WysiwygE extends Component implements HasSize, HasStyle, HasValue<WysiwygE, String> {
+public class WysiwygE extends AbstractField<WysiwygE,String> implements HasSize, HasStyle {
 
     /**
      * Constructs a wysiwyg-e rich text editor with default size of height 250px and width 600px.
@@ -77,6 +72,7 @@ public class WysiwygE extends Component implements HasSize, HasStyle, HasValue<W
      * @param width  the width for the editor
      */
     public WysiwygE(String height, String width) {
+        super("");
         setHeight(height);
         setWidth(width);
         initToolbar();
@@ -135,23 +131,23 @@ public class WysiwygE extends Component implements HasSize, HasStyle, HasValue<W
                 .setAttribute("h6", true);
         getElement().appendChild(headingElement);
         getElement().appendChild(new Element("wysiwyg-tool-blockquote"));
+
+        getElement().addPropertyChangeListener(getClientValuePropertyName(), e-> {
+        });
+        getElement().addEventListener("blur", event -> {
+            setModelValue(getText(), true);
+        });
     }
 
     @Override
-    public void setValue(String value) {
-        getElement().setProperty(getClientValuePropertyName(), value);
+    protected void setPresentationValue(String newPresentationValue) {
+        getElement().setProperty(getClientValuePropertyName(), newPresentationValue);
     }
 
-    @Synchronize("blur")
-    @Override
-    public String getValue() {
+    @Synchronize(value = "blur", property = "value")
+    public String getText() {
         String value = getElement().getProperty(getClientValuePropertyName());
         return value == null ? getEmptyValue() : value;
-    }
-
-    @Override
-    public String getEmptyValue() {
-        return "";
     }
 
     /**
