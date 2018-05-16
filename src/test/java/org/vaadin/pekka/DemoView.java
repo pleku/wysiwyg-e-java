@@ -23,10 +23,9 @@
  */
 package org.vaadin.pekka;
 
-import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Span;
@@ -59,7 +58,7 @@ public class DemoView extends VerticalLayout {
     }
 
     private void createComponent() {
-        wysiwygE = new WysiwygE("300px", "100vw");
+        wysiwygE = new WysiwygE();
 
         wysiwygE.addValueChangeListener(this::onValueChange);
     }
@@ -84,7 +83,7 @@ public class DemoView extends VerticalLayout {
         return checkbox;
     }
 
-    private void onValueChange(HasValue.ValueChangeEvent<WysiwygE, String> event) {
+    private void onValueChange(ComponentValueChangeEvent<WysiwygE, String> event) {
         Div div = new Div();
         div.getElement().setProperty("innerText", event.getValue());
         div.getStyle().set("background-color", "springgreen");

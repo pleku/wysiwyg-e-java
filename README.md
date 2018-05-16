@@ -12,6 +12,6 @@ Starting the test/demo server:
 mvn jetty:run
 ```
 
-This deploys demo at http://localhost:8080
+This deploys demo at http://localhost:9999
 
 

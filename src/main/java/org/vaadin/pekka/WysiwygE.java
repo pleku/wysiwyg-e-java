@@ -23,11 +23,9 @@
  */
 package org.vaadin.pekka;
 
-import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.AbstractSinglePropertyField;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasStyle;
-import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.Synchronize;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.dom.Element;
@@ -61,7 +59,7 @@ import java.util.Objects;
 @HtmlImport("bower_components/wysiwyg-e/tools/justify.html")
 @HtmlImport("bower_components/wysiwyg-e/tools/heading.html")
 @HtmlImport("bower_components/wysiwyg-e/tools/blockquote.html")
-public class WysiwygE extends Component implements HasSize, HasStyle, HasValue<WysiwygE, String> {
+public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> implements HasSize, HasStyle {
 
     /**
      * Constructs a wysiwyg-e rich text editor with default size of height 250px and width 600px.
@@ -77,6 +75,8 @@ public class WysiwygE extends Component implements HasSize, HasStyle, HasValue<W
      * @param width  the width for the editor
      */
     public WysiwygE(String height, String width) {
+        super("value", "", false);
+        setSynchronizedEvent("blur");
         setHeight(height);
         setWidth(width);
         initToolbar();
@@ -137,21 +137,12 @@ public class WysiwygE extends Component implements HasSize, HasStyle, HasValue<W
         getElement().appendChild(new Element("wysiwyg-tool-blockquote"));
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
+    /* Inherited to get the type correct in class level javadocs. */
     public void setValue(String value) {
-        getElement().setProperty(getClientValuePropertyName(), value);
-    }
-
-    @Synchronize("blur")
-    @Override
-    public String getValue() {
-        String value = getElement().getProperty(getClientValuePropertyName());
-        return value == null ? getEmptyValue() : value;
-    }
-
-    @Override
-    public String getEmptyValue() {
-        return "";
+        super.setValue(value);
     }
 
     /**
