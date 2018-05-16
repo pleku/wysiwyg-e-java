@@ -6,7 +6,7 @@
 
     <groupId>org.vaadin.pekka</groupId>
     <artifactId>wysiwyg_e-java</artifactId>
-    <version>1.0.0.alpha1</version>
+    <version>1.0.0.alpha2</version>
     <name>wysiwyg-e Rich Text Editor component for Java</name>
     <description>Java Integration of wysiwyg-e Rich Text Editor web component for Vaadin 10
     </description>
