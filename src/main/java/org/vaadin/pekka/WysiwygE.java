@@ -30,7 +30,11 @@ import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.dom.Element;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * A rich text editor that wraps the <a href="https://github.com/miztroh/wysiwyg-e">wysiwyg-e web component</a>.
@@ -61,25 +65,74 @@ import java.util.Objects;
 @HtmlImport("bower_components/wysiwyg-e/tools/blockquote.html")
 public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> implements HasSize, HasStyle {
 
-    /**
-     * Constructs a wysiwyg-e rich text editor with default size of height 250px and width 600px.
-     */
-    public WysiwygE() {
-        this("250px", "600px");
+    public enum Tool {
+        BOLD, UNDERLINE, STRIKE, COLOR, CLEAR, CODE, LINK, IMAGE, AUDIO, VIDEO, ORDERED, INDENT, OUTDENT, JUSTIFY, HEADING, BLOCKQUOTE
     }
 
     /**
-     * Constructs a wysiwyg-e rich text editor with the given size.
+     * Constructs a wysiwyg-e rich text editor with all the tools visible and default size of height 300px and width 800px.
+     */
+    public WysiwygE() {
+        this(true);
+    }
+
+    /**
+     * Constructs a wysiwyg-e rich text editor with default size of height 300px and width 800px.
+     *
+     * @param allToolsVisible should the toolbar with tools be visible or not
+     */
+    public WysiwygE(boolean allToolsVisible) {
+        this("300px", "800px", allToolsVisible);
+    }
+
+    /**
+     * Constructs a wysiwyg-e rich text editor with default size of height 300px and width 800px and shows only the given tools.
+     *
+     * @param tools the tools to show, hides all other tools
+     */
+    public WysiwygE(Tool... tools) {
+        this();
+        setToolsVisible(tools);
+    }
+
+    /**
+     * Constructs a wysiwyg-e rich text editor with all the tools visible and the given size.
      *
      * @param height the height for the editor
      * @param width  the width for the editor
      */
     public WysiwygE(String height, String width) {
+        this(height, width, true);
+    }
+
+    /**
+     * Constructs a wysiwyg-e rich text editor with the toolbar visible and the given size and shows only the given tools.
+     *
+     * @param height the height for the editor
+     * @param width  the width for the editor
+     * @param tools  the tools to show, hides all other tools
+     */
+    public WysiwygE(String height, String width, Tool... tools) {
+        this(height, width, true);
+        setToolsVisible(tools);
+    }
+
+    /**
+     * Constructs a wysiwyg-e rich text editor.
+     *
+     * @param height       the height for the editor
+     * @param width        the width for the editor
+     * @param toolsVisible should the toolbar with tools be visible or not
+     */
+    public WysiwygE(String height, String width, boolean toolsVisible) {
         super("value", "", false);
         setSynchronizedEvent("blur");
         setHeight(height);
         setWidth(width);
         initToolbar();
+        if (!toolsVisible) {
+            setAllToolsVisible(toolsVisible);
+        }
     }
 
     /**
@@ -221,6 +274,93 @@ public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> impl
      */
     public void undo() {
         getElement().callFunction("undo");
+    }
+
+    /**
+     * Sets all the tools visible or hidden.
+     *
+     * @param allToolsVisible {@code true} for setting all tools visible, {@code false} for hiding all tools
+     * @see #setToolsInvisible(Tool...) for hiding specific tools
+     * @see #setToolsVisible(Tool...) for showing specific tools
+     * @see #setToolVisible(Tool, boolean) for showing or hiding specific tool
+     */
+    public void setAllToolsVisible(boolean allToolsVisible) {
+        if (allToolsVisible) {
+            setToolsInvisible();
+        } else {
+            setToolsVisible();
+        }
+    }
+
+    /**
+     * Returns whether all the tools in the toolbar are visible or not.
+     *
+     * @return {@code true} for visible, {@code false} if not
+     */
+    public boolean isAllToolsVisible() {
+        Stream<Boolean> invisibleTools = Stream.of(Tool.values()).map(this::isToolVisible).filter(visible -> !visible);
+        return invisibleTools.count() == 0;
+    }
+
+    /**
+     * Sets the given tools visible and hides all other tools.
+     *
+     * @param tools the tools to set visible, not {@code null}
+     * @see #setAllToolsVisible(boolean) for hiding all tools
+     * @see #setToolsInvisible(Tool...) for hiding specific tools
+     * @see #setToolVisible(Tool, boolean) for showing or hiding specific tool
+     */
+    public void setToolsVisible(Tool... tools) {
+        Objects.requireNonNull(tools);
+
+        Set<Tool> visibleTools = new HashSet<>(Arrays.asList(tools));
+        Stream.of(Tool.values()).forEach(tool -> setToolVisibleInternal(tool, visibleTools.contains(tool)));
+    }
+
+    /**
+     * Sets the given tools invisible and shows all other tools.
+     *
+     * @param tools the tools to set visible, not {@code null}
+     */
+    public void setToolsInvisible(Tool... tools) {
+        Objects.requireNonNull(tools);
+
+        Set<Tool> invisibleTools = new HashSet<>(Arrays.asList(tools));
+        Stream.of(Tool.values()).forEach(tool -> setToolVisibleInternal(tool, !invisibleTools.contains(tool)));
+    }
+
+    /**
+     * Sets the given tool visible or hidden.
+     *
+     * @param tool    the tool to set visible, not {@code null}
+     * @param visible {@code true} to set visible, {@code false} to hide
+     */
+    public void setToolVisible(Tool tool, boolean visible) {
+        Objects.requireNonNull(tool, "Tool cannot be null");
+
+        setToolVisibleInternal(tool, visible);
+    }
+
+    /**
+     * Returns whether the given tool is visible or hidden.
+     *
+     * @param tool the tool to check
+     * @return {@code true} if visible, {@code false} false if not
+     */
+    public boolean isToolVisible(Tool tool) {
+        Objects.requireNonNull(tool, "Tool cannot be null");
+
+        return isToolVisibleInternal(tool);
+    }
+
+    private void setToolVisibleInternal(Tool tool, boolean visible) {
+        final String tag = tool.name().toLowerCase();
+        getElement().getChildren().filter(element -> element.getTag().endsWith(tag)).findAny().ifPresent(element -> element.setVisible(visible));
+    }
+
+    private boolean isToolVisibleInternal(Tool tool) {
+        final String tag = tool.name().toLowerCase();
+        return getElement().getChildren().filter(element -> element.getTag().endsWith(tag)).findAny().filter(Element::isVisible).isPresent();
     }
 
     // locale support is function based, it returns a JsonObject with values for redo/undo for each supported language
