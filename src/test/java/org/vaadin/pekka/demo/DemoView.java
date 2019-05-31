@@ -36,6 +36,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.BodySize;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.Theme;
@@ -65,6 +66,7 @@ public class DemoView extends VerticalLayout {
     private void createComponent() {
         wysiwygE = new WysiwygE();
 
+        wysiwygE.setValueChangeMode(ValueChangeMode.EAGER);
         wysiwygE.addValueChangeListener(this::onValueChange);
     }
 
@@ -75,7 +77,7 @@ public class DemoView extends VerticalLayout {
 
         FlexLayout toolbarOptions = new FlexLayout();
         toolbarOptions.getElement().getStyle().set("flex-wrap", "wrap");
-        Stream.of(WysiwygE.Tool.values()).map(tool -> createToolCheckbox(tool)).forEachOrdered(toolbarOptions::add);
+        Stream.of(WysiwygE.Tool.values()).map(this::createToolCheckbox).forEachOrdered(toolbarOptions::add);
 
         Consumer<Boolean> settingToolbarVisiblity = toolbarVisible -> {
             wysiwygE.setAllToolsVisible(toolbarVisible);
