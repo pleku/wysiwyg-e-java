@@ -23,10 +23,7 @@
  */
 package org.vaadin.pekka;
 
-import com.vaadin.flow.component.AbstractSinglePropertyField;
-import com.vaadin.flow.component.HasSize;
-import com.vaadin.flow.component.HasStyle;
-import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.data.value.HasValueChangeMode;
 import com.vaadin.flow.data.value.ValueChangeMode;
@@ -66,7 +63,8 @@ import java.util.stream.Stream;
 @HtmlImport("bower_components/wysiwyg-e/tools/justify.html")
 @HtmlImport("bower_components/wysiwyg-e/tools/heading.html")
 @HtmlImport("bower_components/wysiwyg-e/tools/blockquote.html")
-public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> implements HasSize, HasStyle, HasValueChangeMode {
+public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String>
+        implements HasSize, HasStyle, HasValueChangeMode, InputNotifier, KeyNotifier, CompositionNotifier {
 
     private ValueChangeMode currentMode;
 
