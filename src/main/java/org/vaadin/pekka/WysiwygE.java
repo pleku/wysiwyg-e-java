@@ -47,6 +47,7 @@ import java.util.stream.Stream;
  * <p>
  * For listening to value change events, use {@link #addValueChangeListener(ValueChangeListener)}.
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 @Tag("wysiwyg-e")
 @HtmlImport("bower_components/wysiwyg-e/wysiwyg-e.html")
 @HtmlImport("bower_components/wysiwyg-e/tools/bold.html")
@@ -128,6 +129,7 @@ public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> impl
      * @param width        the width for the editor
      * @param toolsVisible should the toolbar with tools be visible or not
      */
+    @SuppressWarnings("ConstantConditions")
     public WysiwygE(String height, String width, boolean toolsVisible) {
         super("value", "", false);
         setSynchronizedEvent("blur");
@@ -230,7 +232,7 @@ public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> impl
      * <p>
      * NOTE: setting this to {@code false} also makes any {@link #redo()} calls not have any effect.
      *
-     * @param redoAllowed
+     * @see #setRedoAllowed(boolean)
      */
     public void setRedoAllowed(boolean redoAllowed) {
         getElement().setProperty("noRedo", !redoAllowed);
