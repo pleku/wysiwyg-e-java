@@ -24,6 +24,7 @@
 package org.vaadin.pekka.demo;
 
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
@@ -68,6 +69,8 @@ public class DemoView extends VerticalLayout {
 
         wysiwygE.setValueChangeMode(ValueChangeMode.EAGER);
         wysiwygE.addValueChangeListener(this::onValueChange);
+
+        wysiwygE.addKeyDownListener(Key.ENTER, event -> System.out.println("ENTER pressed"));
     }
 
     private void createOptions() {
