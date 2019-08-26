@@ -47,7 +47,6 @@ import java.util.stream.Stream;
 
 @BodySize(height = "100vh", width = "100vw")
 @Route("")
-@Theme(Lumo.class)
 @PageTitle("wysiwyg-e Java demo")
 public class DemoView extends VerticalLayout {
 

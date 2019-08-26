@@ -28,6 +28,8 @@ import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.dom.Element;
 
 import java.util.Arrays;
@@ -46,27 +48,33 @@ import java.util.stream.Stream;
  * For listening to value change events, use {@link #addValueChangeListener(ValueChangeListener)}.
  */
 @Tag("wysiwyg-e")
-@HtmlImport("bower_components/wysiwyg-e/wysiwyg-e.html")
-@HtmlImport("bower_components/wysiwyg-e/tools/bold.html")
-@HtmlImport("bower_components/wysiwyg-e/tools/underline.html")
-@HtmlImport("bower_components/wysiwyg-e/tools/strike.html")
-@HtmlImport("bower_components/wysiwyg-e/tools/color.html")
-@HtmlImport("bower_components/wysiwyg-e/tools/clear.html")
-@HtmlImport("bower_components/wysiwyg-e/tools/code.html")
-@HtmlImport("bower_components/wysiwyg-e/tools/link.html")
-@HtmlImport("bower_components/wysiwyg-e/tools/image.html")
-@HtmlImport("bower_components/wysiwyg-e/tools/audio.html")
-@HtmlImport("bower_components/wysiwyg-e/tools/video.html")
-@HtmlImport("bower_components/wysiwyg-e/tools/ordered.html")
-@HtmlImport("bower_components/wysiwyg-e/tools/indent.html")
-@HtmlImport("bower_components/wysiwyg-e/tools/outdent.html")
-@HtmlImport("bower_components/wysiwyg-e/tools/justify.html")
-@HtmlImport("bower_components/wysiwyg-e/tools/heading.html")
-@HtmlImport("bower_components/wysiwyg-e/tools/blockquote.html")
+@NpmPackage(value = "wysiwyg-e", version = "pleku/wysiwyg-e#patch-1")
+@JsModule("wysiwyg-e/wysiwyg-e.js")
+@JsModule("wysiwyg-e/tools/audio.js")
+@JsModule("wysiwyg-e/tools/blockquote.js")
+@JsModule("wysiwyg-e/tools/bold.js")
+@JsModule("wysiwyg-e/tools/clear.js")
+@JsModule("wysiwyg-e/tools/code.js")
+@JsModule("wysiwyg-e/tools/color.js")
+@JsModule("wysiwyg-e/tools/heading.js")
+@JsModule("wysiwyg-e/tools/image.js")
+@JsModule("wysiwyg-e/tools/indent.js")
+@JsModule("wysiwyg-e/tools/italic.js")
+@JsModule("wysiwyg-e/tools/justify.js")
+@JsModule("wysiwyg-e/tools/link.js")
+@JsModule("wysiwyg-e/tools/ordered.js")
+@JsModule("wysiwyg-e/tools/outdent.js")
+@JsModule("wysiwyg-e/tools/strike.js")
+@JsModule("wysiwyg-e/tools/table.js")
+@JsModule("wysiwyg-e/tools/underline.js")
+@JsModule("wysiwyg-e/tools/unordered.js")
+@JsModule("wysiwyg-e/tools/video.js")
 public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> implements HasSize, HasStyle {
 
     public enum Tool {
-        BOLD, UNDERLINE, STRIKE, COLOR, CLEAR, CODE, LINK, IMAGE, AUDIO, VIDEO, ORDERED, INDENT, OUTDENT, JUSTIFY, HEADING, BLOCKQUOTE
+        BOLD, UNDERLINE, STRIKE, COLOR, CLEAR, CODE, LINK, IMAGE, AUDIO,
+        VIDEO, ORDERED, INDENT, OUTDENT, JUSTIFY, HEADING, BLOCKQUOTE,
+        UNORDERED, ITALIC, TABLE
     }
 
     /**
@@ -170,22 +178,25 @@ public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> impl
         getElement().appendChild(new Element("wysiwyg-tool-image"));
         getElement().appendChild(new Element("wysiwyg-tool-audio"));
         getElement().appendChild(new Element("wysiwyg-tool-video"));
+        getElement().appendChild(new Element("wysiwyg-tool-table"));
         getElement().appendChild(new Element("wysiwyg-tool-ordered"));
         getElement().appendChild(new Element("wysiwyg-tool-unordered"));
         getElement().appendChild(new Element("wysiwyg-tool-indent"));
         getElement().appendChild(new Element("wysiwyg-tool-outdent"));
-        Element justifyElement = new Element("wysiwyg-tool-justify").setAttribute("right", true)
-                .setAttribute("center", true)
-                .setAttribute("full", true);
+        Element justifyElement =
+                new Element("wysiwyg-tool-justify").setAttribute("allow-right",
+                        true)
+                .setAttribute("allow-center", true)
+                .setAttribute("allow-full", true);
         getElement().appendChild(justifyElement);
         Element headingElement = new Element("wysiwyg-tool-heading")
-                .setAttribute("h1", true)
-                .setAttribute("h2", true)
-                .setAttribute("h3", true)
-                .setAttribute("h3", true)
-                .setAttribute("h4", true)
-                .setAttribute("h5", true)
-                .setAttribute("h6", true);
+                .setAttribute("allow-h1", true)
+                .setAttribute("allow-h2", true)
+                .setAttribute("allow-h3", true)
+                .setAttribute("allow-h3", true)
+                .setAttribute("allow-h4", true)
+                .setAttribute("allow-h5", true)
+                .setAttribute("allow-h6", true);
         getElement().appendChild(headingElement);
         getElement().appendChild(new Element("wysiwyg-tool-blockquote"));
     }
@@ -266,14 +277,14 @@ public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> impl
      * Redoes the last edit.
      */
     public void redo() {
-        getElement().callFunction("redo");
+        getElement().callJsFunction("redo");
     }
 
     /**
      * Undoes the last edit.
      */
     public void undo() {
-        getElement().callFunction("undo");
+        getElement().callJsFunction("undo");
     }
 
     /**
