@@ -24,12 +24,17 @@
 package org.vaadin.pekka;
 
 import com.vaadin.flow.component.AbstractSinglePropertyField;
+import com.vaadin.flow.component.CompositionNotifier;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasStyle;
+import com.vaadin.flow.component.InputNotifier;
+import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
+import com.vaadin.flow.data.value.HasValueChangeMode;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.dom.Element;
 
 import java.util.Arrays;
@@ -69,13 +74,16 @@ import java.util.stream.Stream;
 @JsModule("wysiwyg-e/tools/underline.js")
 @JsModule("wysiwyg-e/tools/unordered.js")
 @JsModule("wysiwyg-e/tools/video.js")
-public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> implements HasSize, HasStyle {
+public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> implements HasSize, HasStyle,
+        HasValueChangeMode, InputNotifier, KeyNotifier, CompositionNotifier {
 
     public enum Tool {
         BOLD, UNDERLINE, STRIKE, COLOR, CLEAR, CODE, LINK, IMAGE, AUDIO,
         VIDEO, ORDERED, INDENT, OUTDENT, JUSTIFY, HEADING, BLOCKQUOTE,
         UNORDERED, ITALIC, TABLE
     }
+
+    private ValueChangeMode currentMode;
 
     /**
      * Constructs a wysiwyg-e rich text editor with all the tools visible and default size of height 300px and width 800px.
@@ -383,5 +391,16 @@ public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> impl
 //        String language = getElement().getProperty("language", "en");
 //        return new Locale(language);
 //    }
+
+    @Override
+    public ValueChangeMode getValueChangeMode() {
+        return currentMode;
+    }
+
+    @Override
+    public void setValueChangeMode(ValueChangeMode valueChangeMode) {
+        this.currentMode = valueChangeMode;
+        this.setSynchronizedEvent(ValueChangeMode.eventForMode(valueChangeMode, "value-changed"));
+    }
 
 }
