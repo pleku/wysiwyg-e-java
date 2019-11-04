@@ -26,6 +26,7 @@ package org.vaadin.pekka.demo;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.H6;
@@ -36,6 +37,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.BodySize;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.Theme;
@@ -73,6 +75,11 @@ public class DemoView extends VerticalLayout {
         placeholder.setValue(wysiwygE.getPlaceholder());
         placeholder.addValueChangeListener(event -> wysiwygE.setPlaceholder(event.getValue()));
 
+        ComboBox<ValueChangeMode> valueChangeModeComboBox = new ComboBox<>();
+        valueChangeModeComboBox.setItems(ValueChangeMode.values());
+        valueChangeModeComboBox.setValue(wysiwygE.getValueChangeMode());
+        valueChangeModeComboBox.addValueChangeListener(event -> wysiwygE.setValueChangeMode(event.getValue()));
+
         FlexLayout toolbarOptions = new FlexLayout();
         toolbarOptions.getElement().getStyle().set("flex-wrap", "wrap");
         Stream.of(WysiwygE.Tool.values()).map(tool -> createToolCheckbox(tool)).forEachOrdered(toolbarOptions::add);
@@ -84,6 +91,7 @@ public class DemoView extends VerticalLayout {
         };
 
         HorizontalLayout options = new HorizontalLayout(placeholder,
+                valueChangeModeComboBox,
                 createCheckbox("Redo allowed", wysiwygE::setRedoAllowed, wysiwygE.isRedoAllowed()),
                 createCheckbox("Undo allowed", wysiwygE::setUndoAllowed, wysiwygE.isUndoAllowed()),
                 new Button("Undo", event -> wysiwygE.undo()),

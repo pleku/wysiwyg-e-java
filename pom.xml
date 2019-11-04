@@ -8,7 +8,8 @@
     <artifactId>wysiwyg_e-java</artifactId>
     <version>1.0.0.beta1</version>
     <name>wysiwyg-e Rich Text Editor component for Java</name>
-    <description>Java Integration of wysiwyg-e Rich Text Editor web component for Vaadin 10
+    <description>Java Integration of wysiwyg-e Rich Text Editor web component
+        for Vaadin 14
     </description>
 
     <properties>

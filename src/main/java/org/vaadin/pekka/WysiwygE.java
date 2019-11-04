@@ -49,6 +49,9 @@ import java.util.stream.Stream;
  * For setting and reading the editor value, use {@link #setValue(String)} and {@link #getValue()}.
  * <p>
  * For listening to value change events, use {@link #addValueChangeListener(ValueChangeListener)}.
+ * By default the value is updated to the server 400 ms after the user has stopped typing.
+ * The value update cadence can be controlled with {@link #setValueChangeMode(ValueChangeMode)}
+ * and {@link #setValueChangeTimeout(int)}.
  */
 @Tag("wysiwyg-e")
 @HtmlImport("bower_components/wysiwyg-e/wysiwyg-e.html")
@@ -75,6 +78,9 @@ public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> impl
         BOLD, UNDERLINE, STRIKE, COLOR, CLEAR, CODE, LINK, IMAGE, AUDIO, VIDEO, ORDERED, INDENT, OUTDENT, JUSTIFY, HEADING, BLOCKQUOTE
     }
 
+    /* The same as in TextField */
+    private int valueChangeTimeout = 400;
+
     private ValueChangeMode currentMode;
 
     /**
@@ -99,7 +105,7 @@ public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> impl
      * @param tools the tools to show, hides all other tools
      */
     public WysiwygE(Tool... tools) {
-        this();
+        this(false);
         setToolsVisible(tools);
     }
 
@@ -134,7 +140,7 @@ public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> impl
      */
     public WysiwygE(String height, String width, boolean toolsVisible) {
         super("value", "", false);
-        setSynchronizedEvent("blur");
+        setValueChangeMode(ValueChangeMode.LAZY);
         setHeight(height);
         setWidth(width);
         initToolbar();
@@ -381,6 +387,10 @@ public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> impl
 //        return new Locale(language);
 //    }
 
+    /**
+     * {@inheritDoc}
+     * <p>The default value is {@link ValueChangeMode#LAZY}.</p>
+     */
     @Override
     public ValueChangeMode getValueChangeMode() {
         return currentMode;
@@ -388,8 +398,29 @@ public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> impl
 
     @Override
     public void setValueChangeMode(ValueChangeMode valueChangeMode) {
-        this.currentMode = valueChangeMode;
-        this.setSynchronizedEvent(ValueChangeMode.eventForMode(valueChangeMode, "value-changed"));
+        if (currentMode != valueChangeMode) {
+            this.currentMode = valueChangeMode;
+            this.setSynchronizedEvent(ValueChangeMode.eventForMode(valueChangeMode, "value-changed"));
+            applyValueChangeTimeout();
+        }
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>The default value is 400ms.</p>
+     */
+    @Override
+    public int getValueChangeTimeout() {
+        return valueChangeTimeout;
+    }
+
+    @Override
+    public void setValueChangeTimeout(int valueChangeTimeout) {
+        this.valueChangeTimeout = valueChangeTimeout;
+        applyValueChangeTimeout();
+    }
+
+    private void applyValueChangeTimeout() {
+        ValueChangeMode.applyChangeTimeout(getValueChangeMode(), getValueChangeTimeout(), getSynchronizationRegistration());
+    }
 }
