@@ -82,7 +82,12 @@ import com.vaadin.flow.shared.Registration;
 public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> implements HasSize, HasStyle,
         HasValueChangeMode, InputNotifier, KeyNotifier, CompositionNotifier {
 
+    private static final String CONTENT_EDITABLE_EXECUTION =
+            "this.$['editable'].contentEditable = $0;" +
+                    "this.$['toolbar'].hidden = $1;";
+
     private Registration detachListenerRegistration;
+    private SerializableConsumer<UI> command;
 
     public enum Tool {
         BOLD, UNDERLINE, STRIKE, COLOR, CLEAR, CODE, LINK, IMAGE, AUDIO,
@@ -92,6 +97,8 @@ public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> impl
 
     /* The same as in TextField */
     private int valueChangeTimeout = 400;
+
+    private boolean previousContentEditable = true;
 
     private ValueChangeMode currentMode;
 
@@ -254,34 +261,47 @@ public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> impl
     public void setReadOnly(boolean readOnly) {
         if (readOnly != isReadOnly()) {
             super.setReadOnly(readOnly);
-            SerializableConsumer<UI> command = ui -> {
-                ui.beforeClientResponse(this, context -> {
-                    boolean readOnly1 = this.isReadOnly();
-                    getElement().executeJs(
-                            "this" +
-                                    ".$['editable']" +
-                                    ".contentEditable = $0;" +
-                                    "this.$['toolbar'].hidden = $1;"
-                            , String.valueOf(!readOnly1), readOnly1);
+            updateContentEditable();
+        }
+    }
 
-                });
-            };
-            //
-            getElement().getNode().runWhenAttached(command);
-            // in case the element is removed & added, it won't be in
-            // readonly mode unless explicitly set. thus need to always set
-            // it to read only if necessary
-            if (isReadOnly() && detachListenerRegistration == null) {
-                detachListenerRegistration = addDetachListener(event -> {
-                    getElement().getNode().runWhenAttached(command);
-                    detachListenerRegistration.remove();
-                    detachListenerRegistration = null;
-                });
-            } else if (!isReadOnly() && detachListenerRegistration != null) {
+    @Override
+    public void onEnabledStateChanged(boolean enabled) {
+        super.onEnabledStateChanged(enabled);
+        updateContentEditable();
+    }
+
+    private void updateContentEditable() {
+            if (isContentEditable() == previousContentEditable) {
+            return;
+        }
+        previousContentEditable = isContentEditable();
+        command = ui -> {
+            ui.beforeClientResponse(this, context -> {
+                boolean contentEditable = isContentEditable();
+                getElement().executeJs(CONTENT_EDITABLE_EXECUTION,
+                        String.valueOf(contentEditable), !contentEditable);
+            });
+        };
+        //
+        getElement().getNode().runWhenAttached(command);
+        // in case the element is removed & added, it won't be in
+        // readonly mode unless explicitly set. thus need to always set
+        // it to read only if necessary
+        if (!isContentEditable() && detachListenerRegistration == null) {
+            detachListenerRegistration = addDetachListener(event -> {
+                getElement().getNode().runWhenAttached(command);
                 detachListenerRegistration.remove();
                 detachListenerRegistration = null;
-            }
+            });
+        } else if (!isReadOnly() && detachListenerRegistration != null) {
+            detachListenerRegistration.remove();
+            detachListenerRegistration = null;
         }
+    }
+
+    private boolean isContentEditable() {
+        return !isReadOnly() && isEnabled();
     }
 
     /**

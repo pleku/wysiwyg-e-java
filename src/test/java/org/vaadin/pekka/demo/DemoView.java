@@ -90,6 +90,7 @@ public class DemoView extends VerticalLayout {
         HorizontalLayout options = new HorizontalLayout(
                 createCheckbox("Add/Remove", this::showComponent, true),
                 createCheckbox("Visible", wysiwygE::setVisible, wysiwygE.isVisible()),
+                createCheckbox("Enabled", wysiwygE::setEnabled, wysiwygE.isEnabled()),
                 createCheckbox("ReadOnly", wysiwygE::setReadOnly,
                         wysiwygE.isReadOnly()),placeholder,
                 valueChangeModeComboBox,
