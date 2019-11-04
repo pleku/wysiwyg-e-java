@@ -8,11 +8,12 @@
     <artifactId>wysiwyg_e-java</artifactId>
     <version>2.0.0.alpha1</version>
     <name>wysiwyg-e Rich Text Editor component for Java</name>
-    <description>Java Integration of wysiwyg-e Rich Text Editor web component for Vaadin 10
+    <description>Java Integration of wysiwyg-e Rich Text Editor web component
+        for Vaadin 14
     </description>
 
     <properties>
-        <vaadin.version>14.0.1</vaadin.version>
+        <vaadin.version>14.0.11</vaadin.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
