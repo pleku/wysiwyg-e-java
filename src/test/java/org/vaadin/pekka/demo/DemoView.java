@@ -23,6 +23,9 @@
  */
 package org.vaadin.pekka.demo;
 
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -40,12 +43,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.theme.lumo.Lumo;
 import org.vaadin.pekka.WysiwygE;
-
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 @BodySize(height = "100vh", width = "100vw")
 @Route("")
@@ -89,7 +87,11 @@ public class DemoView extends VerticalLayout {
             toolbarOptions.getChildren().map(component -> (Checkbox) component).forEach(cb -> cb.setValue(toolbarVisible));
         };
 
-        HorizontalLayout options = new HorizontalLayout(placeholder,
+        HorizontalLayout options = new HorizontalLayout(
+                createCheckbox("Add/Remove", this::showComponent, true),
+                createCheckbox("Visible", wysiwygE::setVisible, wysiwygE.isVisible()),
+                createCheckbox("ReadOnly", wysiwygE::setReadOnly,
+                        wysiwygE.isReadOnly()),placeholder,
                 valueChangeModeComboBox,
                 createCheckbox("Redo allowed", wysiwygE::setRedoAllowed, wysiwygE.isRedoAllowed()),
                 createCheckbox("Undo allowed", wysiwygE::setUndoAllowed, wysiwygE.isUndoAllowed()),
@@ -125,6 +127,14 @@ public class DemoView extends VerticalLayout {
         notification.setPosition(Notification.Position.BOTTOM_END);
         notification.add(new Span("ValueChangeEvent, fromClient:" + event.isFromClient()), div);
         notification.open();
+    }
+
+    private void showComponent(boolean show) {
+        if (show) {
+            add(wysiwygE);
+        } else {
+            remove(wysiwygE);
+        }
     }
 
 }

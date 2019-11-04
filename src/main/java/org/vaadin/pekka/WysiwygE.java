@@ -23,6 +23,12 @@
  */
 package org.vaadin.pekka;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Stream;
+
 import com.vaadin.flow.component.AbstractSinglePropertyField;
 import com.vaadin.flow.component.CompositionNotifier;
 import com.vaadin.flow.component.HasSize;
@@ -30,16 +36,13 @@ import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.InputNotifier;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.data.value.HasValueChangeMode;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.dom.Element;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Stream;
+import com.vaadin.flow.function.SerializableConsumer;
+import com.vaadin.flow.shared.Registration;
 
 /**
  * A rich text editor that wraps the <a href="https://github.com/miztroh/wysiwyg-e">wysiwyg-e web component</a>.
@@ -73,6 +76,8 @@ import java.util.stream.Stream;
 @HtmlImport("bower_components/wysiwyg-e/tools/blockquote.html")
 public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> implements HasSize, HasStyle,
         HasValueChangeMode, InputNotifier, KeyNotifier, CompositionNotifier {
+
+    private Registration detachListenerRegistration;
 
     public enum Tool {
         BOLD, UNDERLINE, STRIKE, COLOR, CLEAR, CODE, LINK, IMAGE, AUDIO, VIDEO, ORDERED, INDENT, OUTDENT, JUSTIFY, HEADING, BLOCKQUOTE
@@ -233,6 +238,40 @@ public class WysiwygE extends AbstractSinglePropertyField<WysiwygE, String> impl
      */
     public String getPlaceholder() {
         return getElement().getProperty("placeholder", "Edit your content here...");
+    }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        if (readOnly != isReadOnly()) {
+            super.setReadOnly(readOnly);
+            SerializableConsumer<UI> command = ui -> {
+                ui.beforeClientResponse(this, context -> {
+                    boolean readOnly1 = this.isReadOnly();
+                    getElement().executeJs(
+                            "this" +
+                                    ".$['editable']" +
+                                    ".contentEditable = $0;" +
+                                    "this.$['toolbar'].hidden = $1;"
+                            , String.valueOf(!readOnly1), readOnly1);
+
+                });
+            };
+            //
+            getElement().getNode().runWhenAttached(command);
+            // in case the element is removed & added, it won't be in
+            // readonly mode unless explicitly set. thus need to always set
+            // it to read only if necessary
+            if (isReadOnly() && detachListenerRegistration == null) {
+                detachListenerRegistration = addDetachListener(event -> {
+                    getElement().getNode().runWhenAttached(command);
+                    detachListenerRegistration.remove();
+                    detachListenerRegistration = null;
+                });
+            } else if (!isReadOnly() && detachListenerRegistration != null) {
+                detachListenerRegistration.remove();
+                detachListenerRegistration = null;
+            }
+        }
     }
 
     /**
