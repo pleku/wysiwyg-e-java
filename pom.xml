@@ -78,6 +78,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.28</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.webjars.bowergithub.miztroh</groupId>
@@ -196,6 +197,17 @@
                         <configuration>
                             <quiet>true</quiet>
                             <additionalparam>-Xdoclint:none</additionalparam>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>3.1.2</version>
+                        <configuration>
+                            <!-- Generated file that shouldn't be included in add-ons -->
+                            <excludes>
+                                <exclude>META-INF/VAADIN/config/flow-build-info.json</exclude>
+                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>
