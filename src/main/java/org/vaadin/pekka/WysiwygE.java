@@ -58,7 +58,7 @@ import com.vaadin.flow.shared.Registration;
  * and {@link #setValueChangeTimeout(int)}.
  */
 @Tag("wysiwyg-e")
-@NpmPackage(value = "wysiwyg-e-fork", version = "3.0.8")
+@NpmPackage(value = "wysiwyg-e-fork", version = "3.0.10")
 @JsModule("wysiwyg-e-fork/wysiwyg-e.js")
 @JsModule("wysiwyg-e-fork/tools/audio.js")
 @JsModule("wysiwyg-e-fork/tools/blockquote.js")
